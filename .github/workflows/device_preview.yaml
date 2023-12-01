@@ -38,7 +38,6 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            const {context} = require('@actions/github');
             const repo = context.repo;
             const pullRequest = context.issue.number;
             const headRef = context.ref.replace('refs/heads/', '');
