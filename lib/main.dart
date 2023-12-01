@@ -46,11 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.black.withOpacity(0.6),
       body: SizedBox.expand(
         child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                color: Colors.red,
-              ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              '🚀🚀🚀🚀🚀🚀🚀',
             ),
             Expanded(
               child: Container(
