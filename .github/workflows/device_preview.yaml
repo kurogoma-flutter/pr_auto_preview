@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@latest
 
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Notify Pull Request
-        uses: actions/github-script@v3
+        uses: actions/github-script@latest
         with:
           script: |
             const repo = context.repo;
