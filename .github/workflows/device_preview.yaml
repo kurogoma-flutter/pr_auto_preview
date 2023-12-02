@@ -32,7 +32,7 @@ jobs:
 
       - run: echo "PULL_REQUEST_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
       - run: flutter pub get
-      - run: flutter build web --web-renderer html --base-href /${{ github.repository }}/
+      - run: flutter build web --web-renderer html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
