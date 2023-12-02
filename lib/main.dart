@@ -27,7 +27,7 @@ class CustomPlugin extends StatelessWidget {
 void main() {
   runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      enabled: true,
       tools: const [
         ...DevicePreview.defaultTools,
         CustomPlugin(),
