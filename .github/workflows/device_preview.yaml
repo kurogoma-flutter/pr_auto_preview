@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/*
 
 permissions:
   contents: read
@@ -27,9 +28,9 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
+      - run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
       - run: flutter pub get
-      - run: flutter build web --web-renderer html
+      - run: flutter build web --web-renderer html --base-href /${{ env.BRANCH_NAME }}/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
@@ -46,3 +47,19 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
+      - name: Notify Pull Request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const pullRequestNumber = context.issue.number;
+            const branchName = process.env.BRANCH_NAME;
+            const pageUrl = `https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${branchName}/`;
+            const comment = `Preview URL for this branch: ${pageUrl}`;
+            github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pullRequestNumber,
+              body: comment
+            });
