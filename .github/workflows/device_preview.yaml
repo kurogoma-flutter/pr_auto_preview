@@ -56,11 +56,13 @@ jobs:
         with:
           script: |
             const pullRequestNumber = context.issue.number;
-            const pageUrl = `https://${github.repository_owner}.github.io/${github.repository}/`;
+            const repositoryOwner = context.repo.owner;
+            const repositoryName = context.repo.repo;
+            const pageUrl = `https://${repositoryOwner}.github.io/${repositoryName}/`;
             const comment = `Preview URL for this pull request: ${pageUrl}`;
             github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: repositoryOwner,
+              repo: repositoryName,
               issue_number: pullRequestNumber,
               body: comment
             });
