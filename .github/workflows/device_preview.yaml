@@ -3,46 +3,57 @@ name: Flutter Web Build and Deploy
 on: 
   pull_request:
     branches:
-      - main
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+      - main  # メインブランチを指定
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.0.1' # Flutterのバージョンを指定
 
-      - run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_ENV
-      - run: flutter pub get
-      - run: flutter build web --web-renderer html --base-href /${{ env.REPOSITORY_NAME }}/
+    - name: Build Web
+      run: |
+        flutter build web
+        cp -r build/web .github/
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./build/web
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        personal_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .github/web
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  notify-pull-request:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-deploy
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+      - uses: actions/checkout@v2
+
+      - name: Notify Pull Request
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const {context} = require('@actions/github');
+            const repo = context.repo;
+            const pullRequest = context.issue.number;
+            const headRef = context.ref.replace('refs/heads/', '');
+            const targetLink = `https://${repo.owner}/${repo.repo}/pages/${headRef}`;
+
+            const comment = `
+              **Web Preview**
+
+              GitHub Pagesの対象リンク: ${targetLink}
+
+              ${headRef}ブランチのプレビュー: ${targetLink}?branch=${headRef}
+            `;
+
+            await github.issues.createComment({
+              ...repo,
+              issue_number: pullRequest,
+              body: comment
+            });
