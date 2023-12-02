@@ -43,8 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.6),
-      body: SizedBox.expand(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(widget.title),
+      ),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
