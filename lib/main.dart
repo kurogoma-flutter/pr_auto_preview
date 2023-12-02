@@ -2,10 +2,36 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+class CustomPlugin extends StatelessWidget {
+  const CustomPlugin({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ToolPanelSection(
+      title: 'Custom',
+      children: [
+        ListTile(
+          title: const Text('Print in console'),
+          onTap: () {
+            // ignore: avoid_print
+            print('Hey, this is a custom plugin!');
+          },
+        )
+      ],
+    );
+  }
+}
+
 void main() {
   runApp(
     DevicePreview(
-      enabled: !kReleaseMode,
+      enabled: true,
+      tools: const [
+        ...DevicePreview.defaultTools,
+        CustomPlugin(),
+      ],
       builder: (context) => const MyApp(), // Wrap your app
     ),
   );
@@ -43,14 +69,29 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.6),
-      body: SizedBox.expand(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+      body: Center(
         child: Column(
-          children: [
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
             Expanded(
               child: Container(
-                color: Colors.red,
+                color: Colors.green,
               ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.blue,
+              ),
+            ),
+            const Text(
+              '🚀🚀🚀🚀🚀🚀🚀',
             ),
             Expanded(
               child: Container(
