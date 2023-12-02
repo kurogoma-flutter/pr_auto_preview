@@ -30,9 +30,9 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - run: echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+      - run: echo "PULL_REQUEST_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
       - run: flutter pub get
-      - run: flutter build web --web-renderer html --base-href /${{ github.repository }}/${{ env.BRANCH_NAME }}/
+      - run: flutter build web --web-renderer html --base-href /${{ github.repository }}/${{ env.PULL_REQUEST_NUMBER }}/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
@@ -56,9 +56,8 @@ jobs:
         with:
           script: |
             const pullRequestNumber = context.issue.number;
-            const branchName = process.env.BRANCH_NAME;
-            const pageUrl = `https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${branchName}/`;
-            const comment = `Preview URL for this branch: ${pageUrl}`;
+            const pageUrl = `https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${pullRequestNumber}/`;
+            const comment = `Preview URL for this pull request: ${pageUrl}`;
             github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
